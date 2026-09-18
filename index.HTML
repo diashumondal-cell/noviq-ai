@@ -1,67 +1,186 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>NoviqAI</title>
 
   <style>
-    body {
-      margin: 0;
-      background: #080b12;
-      color: white;
-      font-family: Arial;
-      height: 100vh;
+    * {
+      box-sizing: border-box;
     }
 
-    .app {
+    body {
+      margin: 0;
       height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #0b1020;
+      color: white;
       display: flex;
       flex-direction: column;
     }
 
-    header {
-      padding: 18px;
-      border-bottom: 1px solid #252b38;
+    .header {
+      height: 65px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      background: #11182d;
+      border-bottom: 1px solid #293451;
       font-size: 22px;
       font-weight: bold;
     }
 
-    #messages {
+    .chat {
       flex: 1;
       overflow-y: auto;
       padding: 20px;
     }
 
     .message {
-      padding: 12px 15px;
-      margin: 10px 0;
-      border-radius: 12px;
       max-width: 80%;
-      white-space: pre-wrap;
+      padding: 12px 15px;
+      margin-bottom: 12px;
+      border-radius: 14px;
+      line-height: 1.5;
+    }
+
+    .ai {
+      background: #18213a;
+      margin-right: auto;
     }
 
     .user {
-      background: #252b3a;
+      background: #625cff;
       margin-left: auto;
     }
 
-    .bot {
-      background: #151b27;
-    }
-
     .input-area {
-      padding: 12px;
-      border-top: 1px solid #252b38;
-    }
-
-    .box {
       display: flex;
-      gap: 8px;
+      gap: 10px;
+      padding: 15px;
+      background: #11182d;
+      border-top: 1px solid #293451;
     }
 
-    #input {
+    #messageInput {
       flex: 1;
-      height: 45px;
-      border-radius: 10px;
-      border: 1px solid #444;
-      background: #151b27;
+      height: 50px;
+      padding: 0 15px;
+      border: 1px solid #465274;
+      border-radius: 12px;
+      background: #080d1b;
+      color: white;
+      font-size: 16px;
+      outline: none;
+    }
+
+    #messageInput:focus {
+      border-color: #7c6cff;
+    }
+
+    #sendButton {
+      width: 90px;
+      border: none;
+      border-radius: 12px;
+      background: #7c6cff;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      #sendButton {
+        width: 75px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    🤖 NoviqAI
+  </div>
+
+  <div class="chat" id="chat">
+    <div class="message ai">
+      Hello! 👋 আমি NoviqAI। আমাকে কিছু জিজ্ঞাসা করো।
+    </div>
+  </div>
+
+  <div class="input-area">
+
+    <input
+      id="messageInput"
+      type="text"
+      placeholder="Type your message..."
+      autocomplete="off"
+    >
+
+    <button id="sendButton">
+      Send
+    </button>
+
+  </div>
+
+  <script>
+    const BACKEND_URL = "https://noviq-ai-2.onrender.com";
+
+    const input = document.getElementById("messageInput");
+    const sendButton = document.getElementById("sendButton");
+    const chat = document.getElementById("chat");
+
+    function addMessage(text, type) {
+      const message = document.createElement("div");
+      message.className = "message " + type;
+      message.textContent = text;
+      chat.appendChild(message);
+      chat.scrollTop = chat.scrollHeight;
+      return message;
+    }
+
+    async function sendMessage() {
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      addMessage(text, "user");
+      input.value = "";
+
+      const thinking = addMessage("NoviqAI thinking...", "ai");
+
+      try {
+        const response = await fetch(BACKEND_URL + "/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: text
+          })
+        });
+
+        const data = await response.json();
+
+        thinking.textContent = data.reply || "No reply received.";
+
+      } catch (error) {
+        thinking.textContent =
+          "Backend-এর সঙ্গে যোগাযোগ করা যাচ্ছে না।";
+      }
+    }
+
+    sendButton.addEventListener("click", sendMessage);
+
+    input.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    });
+  </script>
+
+</body>
+</html>
