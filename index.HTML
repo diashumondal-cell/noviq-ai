@@ -1,211 +1,83 @@
-const BACKEND_URL = "https://noviq-ai-2.onrender.com";<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>NoviqAI</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-
     body {
+      margin: 0;
       background: #080b12;
       color: white;
+      font-family: Arial;
       height: 100vh;
-      overflow: hidden;
     }
 
     .app {
-      display: flex;
       height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* SIDEBAR */
-    .sidebar {
-      width: 260px;
-      background: #0d111b;
-      border-right: 1px solid #222938;
+    header {
       padding: 18px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 25px;
-    }
-
-    .logo-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: #fff;
-      object-fit: cover;
-    }
-
-    .new-chat {
-      background: #7c6cff;
-      border: none;
-      color: white;
-      padding: 13px;
-      border-radius: 10px;
-      font-size: 15px;
-      cursor: pointer;
-      margin-bottom: 20px;
-    }
-
-    .new-chat:hover {
-      opacity: 0.9;
-    }
-
-    .recent {
-      color: #9299aa;
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-
-    .chat-history {
-      color: #ddd;
-      font-size: 14px;
-    }
-
-    /* MAIN */
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    .topbar {
-      height: 65px;
-      border-bottom: 1px solid #222938;
-      display: flex;
-      align-items: center;
-      padding: 0 22px;
-      font-size: 18px;
+      border-bottom: 1px solid #252b38;
+      font-size: 22px;
       font-weight: bold;
     }
 
-    .messages {
+    #messages {
       flex: 1;
       overflow-y: auto;
-      padding: 30px 15%;
-    }
-
-    .welcome {
-      text-align: center;
-      margin-top: 12vh;
-    }
-
-    .welcome h1 {
-      font-size: 34px;
-      margin-bottom: 10px;
-    }
-
-    .welcome p {
-      color: #9299aa;
-      font-size: 16px;
+      padding: 20px;
     }
 
     .message {
-      margin: 18px 0;
-      padding: 15px 18px;
-      border-radius: 14px;
-      line-height: 1.5;
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 12px;
       max-width: 80%;
       white-space: pre-wrap;
     }
 
     .user {
+      background: #252b3a;
       margin-left: auto;
-      background: #242a3a;
     }
 
     .bot {
-      margin-right: auto;
       background: #151b27;
-      border: 1px solid #242b3b;
     }
 
-    /* INPUT */
     .input-area {
-      padding: 15px 12%;
-      border-top: 1px solid #222938;
-      background: #080b12;
+      padding: 12px;
+      border-top: 1px solid #252b38;
     }
 
-    .input-box {
+    .box {
       display: flex;
-      align-items: center;
-      background: #151b27;
-      border: 1px solid #30384a;
-      border-radius: 14px;
-      padding: 8px;
+      gap: 8px;
     }
 
-    textarea {
+    #input {
       flex: 1;
-      resize: none;
-      border: none;
-      outline: none;
-      background: transparent;
-      color: white;
-      padding: 10px;
-      font-size: 15px;
       height: 45px;
+      border-radius: 10px;
+      border: 1px solid #444;
+      background: #151b27;
+      color: white;
+      padding: 0 12px;
+      font-size: 16px;
+      outline: none;
     }
 
-    .send {
-      width: 45px;
-      height: 45px;
-      border: none;
+    button {
+      width: 50px;
+      border: 0;
       border-radius: 10px;
       background: #7c6cff;
       color: white;
       font-size: 20px;
-      cursor: pointer;
-    }
-
-    .send:disabled {
-      opacity: 0.5;
-    }
-
-    /* MOBILE */
-    @media (max-width: 700px) {
-      .sidebar {
-        display: none;
-      }
-
-      .messages {
-        padding: 20px 12px;
-      }
-
-      .input-area {
-        padding: 10px;
-      }
-
-      .welcome {
-        margin-top: 15vh;
-      }
-
-      .welcome h1 {
-        font-size: 27px;
-      }
-
-      .message {
-        max-width: 90%;
-      }
     }
   </style>
 </head>
@@ -214,175 +86,76 @@ const BACKEND_URL = "https://noviq-ai-2.onrender.com";<!DOCTYPE html>
 
 <div class="app">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <header>🤖 NoviqAI</header>
 
-    <div class="logo">
-      <img
-        class="logo-icon"
-        src="https://diashumondal-cell.github.io/noviq-ai/logo.png"
-        onerror="this.style.display='none'"
+  <div id="messages">
+    <div class="message bot">
+      Hello! আমি NoviqAI 🤖<br>
+      How can I help you?
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="box">
+      <input
+        id="input"
+        type="text"
+        placeholder="Message NoviqAI..."
       >
-      NoviqAI
+
+      <button onclick="sendMessage()">↑</button>
     </div>
-
-    <button class="new-chat" onclick="newChat()">
-      + New chat
-    </button>
-
-    <div class="recent">Recent chats</div>
-
-    <div class="chat-history" id="history">
-      No chats yet
-    </div>
-
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-
-    <div class="topbar">
-      NoviqAI 🤖
-    </div>
-
-    <div class="messages" id="messages">
-
-      <div class="welcome" id="welcome">
-        <h1>How can I help you?</h1>
-        <p>Ask NoviqAI anything.</p>
-      </div>
-
-    </div>
-
-    <div class="input-area">
-
-      <div class="input-box">
-
-        <textarea
-          id="input"
-          placeholder="Message NoviqAI..."
-          onkeydown="handleKey(event)"
-        ></textarea>
-
-        <button
-          class="send"
-          id="send"
-          onclick="sendMessage()"
-        >
-          ↑
-        </button>
-
-      </div>
-
-    </div>
-
-  </main>
+  </div>
 
 </div>
 
 <script>
 
-  const BACKEND_URL = "https://noviqai.onrender.com";
+const BACKEND_URL = "https://noviq-ai-2.onrender.com";
+
+async function sendMessage() {
 
   const input = document.getElementById("input");
   const messages = document.getElementById("messages");
-  const sendButton = document.getElementById("send");
-  const welcome = document.getElementById("welcome");
 
-  function handleKey(event) {
+  const text = input.value.trim();
 
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      sendMessage();
-    }
+  if (!text) return;
 
-  }
+  messages.innerHTML +=
+    '<div class="message user">' +
+    text +
+    '</div>';
 
-  function addMessage(text, type) {
+  input.value = "";
 
-    if (welcome) {
-      welcome.style.display = "none";
-    }
+  messages.innerHTML +=
+    '<div class="message bot" id="loading">NoviqAI is thinking...</div>';
 
-    const div = document.createElement("div");
+  try {
 
-    div.className = "message " + type;
+    const response = await fetch(BACKEND_URL + "/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: text
+      })
+    });
 
-    div.textContent = text;
+    const data = await response.json();
 
-    messages.appendChild(div);
+    document.getElementById("loading").textContent =
+      data.reply || "No response.";
 
-    messages.scrollTop = messages.scrollHeight;
+  } catch (error) {
 
-    return div;
-  }
-
-  async function sendMessage() {
-
-    const text = input.value.trim();
-
-    if (!text) return;
-
-    addMessage(text, "user");
-
-    input.value = "";
-
-    sendButton.disabled = true;
-
-    const loading = addMessage("NoviqAI is thinking...", "bot");
-
-    try {
-
-      const response = await fetch(BACKEND_URL + "/chat", {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-          message: text
-        })
-
-      });
-
-      if (!response.ok) {
-        throw new Error("Server error");
-      }
-
-      const data = await response.json();
-
-      loading.textContent =
-        data.reply || "No response received.";
-
-    } catch (error) {
-
-      loading.textContent =
-        "⚠️ Backend-এর সঙ্গে যোগাযোগ করা যাচ্ছে না। একটু পরে আবার চেষ্টা করো।";
-
-      console.error(error);
-
-    }
-
-    sendButton.disabled = false;
-
-    input.focus();
+    document.getElementById("loading").textContent =
+      "Backend-এর সঙ্গে যোগাযোগ করা যাচ্ছে না।";
 
   }
-
-  function newChat() {
-
-    messages.innerHTML = `
-      <div class="welcome" id="welcome">
-        <h1>How can I help you?</h1>
-        <p>Ask NoviqAI anything.</p>
-      </div>
-    `;
-
-    input.value = "";
-
-  }
+}
 
 </script>
 
